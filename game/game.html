@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Number Guessing Game by Your Name</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            background-color: #fddede;
+            margin: 20px;
+        }
+        h2 {
+            color: #e03c3c;
+            text-shadow: 2px 2px 2px #ffffff;
+        } 
+        p {
+            color: #bf0000;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #e03c3c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #bf0000;
+        }
+        #feedback {
+            font-size: 20px;
+            font-weight: bold;
+            color: #bf0000;
+            margin-top: 20px;
+        }
+
+        /* Additional styling for levels */
+        #level {
+            color: #e03c3c;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>🎉 Number Guessing Game 🎉</h2>
+    <p>Can you guess the number between 1 and <span id="upperBound">100</span>?</p>
+    <input type="number" id="guessInput" placeholder="Enter your guess">
+    <button onclick="checkGuess()">Make a Guess</button>
+    <p id="feedback"></p>
+    <p id="level"></p> <!-- Display the current level -->
+    <p id="score"></p> <!-- Display the total score -->
+
+    <script>
+        const feedbackElement = document.getElementById('feedback');
+        const levelElement = document.getElementById('level');
+        const upperBoundElement = document.getElementById('upperBound');
+        const scoreElement = document.getElementById('score');
+        let secretNumber;
+        let numberOfGuesses;
+        let currentLevel;
+        let totalScore;
+
+        startNewGame(); // Initial setup
+
+        function startNewGame() {
+            secretNumber = generateRandomNumber();
+            numberOfGuesses = 0;
+            currentLevel = 1;
+            totalScore = totalScore || 0; // Initialize totalScore if not present
+            updateLevelDisplay();
+            updateScoreDisplay();
+            updateUpperBoundDisplay();
+        }
+
+        function generateRandomNumber() {
+            return Math.floor(Math.random() * currentLevel * 100) + 1; // Increase the upper bound by 100 for each level
+        }
+
+        function checkGuess() {
+            numberOfGuesses++;
+            const userGuess = parseInt(document.getElementById('guessInput').value);
+            
+            if (userGuess > secretNumber) {
+                feedbackElement.textContent = 'Too high! 📈 Try again.';
+            } else if (userGuess < secretNumber) {
+                feedbackElement.textContent = 'Too low! 📉 Try again.';
+            } else {
+                const points = calculatePoints(numberOfGuesses);
+                feedbackElement.innerHTML = `<span style="color: #008000;">Correct! 🎉 Well done.</span><br>You guessed the number in ${numberOfGuesses} attempts.<br>Your score for this level: ${points} points.`;
+                totalScore += points; // Add the points to the total score
+
+                // Check for level up
+                if (numberOfGuesses <= 10) {
+                    currentLevel++;
+                }
+
+                startNewGame();
+            }
+            updateLevelDisplay();
+            updateScoreDisplay();
+            updateUpperBoundDisplay();
+        }
+
+        function calculatePoints(guesses) {
+            const basePoints = 100;
+            const penaltyPerGuess = 10;
+            return Math.max(0, basePoints - (penaltyPerGuess * (guesses - 1)));
+        }
+
+        function updateLevelDisplay() {
+            levelElement.textContent = `Level: ${currentLevel}`;
+        }
+
+        function updateScoreDisplay() {
+            scoreElement.textContent = `Total Score: ${totalScore} points`;
+        }
+
+        function updateUpperBoundDisplay() {
+            upperBoundElement.textContent = currentLevel * 100; // Update the upper bound display
+        }
+    </script>
+</body>
+</html>
