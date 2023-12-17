@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA Photos App</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to external styles.css -->
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 NASA Photos App 📸</h1>
+        <p>Explore Mars Rover photos</p>
+        <form id="photoForm">
+            <label for="sol">Sol:</label>
+            <input type="number" id="sol" placeholder="Enter sol" min="0" required>
+            <br>
+            <label for="camera">Camera:</label> </br>
+            <select id="camera" name="camera">
+                <option value="fhaz">FHAZ</option>
+                <option value="navcam">NAVCAM</option>
+                <option value="rhaz">RHAZ</option>
+                <option value="mast">MAST</option>
+                <option value="chemcam">CHEMCAM</option>
+                <option value="mahli">MAHLI</option>        
+            </select>
+            <br></br>
+            <button type="submit">Get Photos</button>
+        </form>
+        <div id="photos"></div>
+
+        <script>
+            document.getElementById('photoForm').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const sol = document.getElementById('sol').value;
+                const camera = document.getElementById('camera').value;
+                const photosDiv = document.getElementById('photos');
+                photosDiv.innerHTML = 'Loading...';
+    
+                try {
+                    const response = await fetch(`/photos?sol=${sol}&camera=${camera}`);
+                    const data = await response.json();
+                    photosDiv.innerHTML = '';
+                    data.photos.forEach(photo => {
+                        const img = document.createElement('img');
+                        img.src = photo.img_src;
+                        img.alt = 'Mars Rover Photo';
+                        img.style.width = '200px';
+                        photosDiv.appendChild(img);
+                    });
+                } catch (error) {
+                    console.error('Error fetching photos:', error);
+                    photosDiv.innerHTML = 'Failed to load photos.';
+                }
+            });
+        </script>
+    </div>
+
+    <script src="app.js"></script> <!-- Link to external app.js -->
+</body>
+</html>
